@@ -11,7 +11,15 @@
     <canvas id="myCanvas" width="704" height="576"></canvas>
     <script>
       var x1,x2,y1,y2=null;
-
+      function postCamera() {
+        var leftup = ((x1<<16)|(y1&65535));
+        var rightdown = ((x2<<16)|(y2&65535));
+        var regionDefine = "http://192.168.1.15/goform/motiondetect?cmd=set&md.regn.index=0&md.regn.leftup="+leftup+"&md.regn.rightdown="+rightdown+"&md.regn.sensitivity=25";
+        var alertDefine = "http://192.168.1.XXX/goform/motiondetect?cmd=set&md.record.aftertime=10&md.record.pretime=20&md.record.uploadftp=1&md.sipphone.enable=1&md.alarmout.enable=0&md.uploadcenter.enable=0&md.snapshot.enable=1&md.regn.index=0"
+        console.log("posting to cameras http api");
+        console.log("leftup: "+leftup+" rightdown: "+rightdown);
+        console.log(regionDefine);
+      }
       function getMousePos(canvas, evt) {
         var rect = canvas.getBoundingClientRect();
         return {
@@ -41,6 +49,12 @@
 
       canvas.addEventListener('mousedown', function(evt) {
         var mousePos = getMousePos(canvas, evt);
+        if (x1 != null && y1 !=null && x2 !=null && y2 !=null){
+          x1=null;
+          y1=null;
+          x2=null;
+          y2=null;
+        }
         if (x1 == null && y1==null){
           x1=mousePos.x;
           y1=mousePos.y;
@@ -48,10 +62,6 @@
           x2=mousePos.x;
           y2=mousePos.y;
           drawRect(canvas, x1,y1,x2,y2);
-          x1=null;
-          y1=null;
-          x2=null;
-          y2=null;
         }
 
         var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
@@ -77,5 +87,29 @@
       imageObj.src = "http://i.imgur.com/6AMlEIo.png";
 
     </script>
+    <form id="motion" method="post" onsubmit="return postCamera()">
+    <div id="zone"><div id="zonelabel">zone 
+    <select id="zone">
+     <option value="0">0</option>
+     <option value="1">1</option>
+     <option value="2">2</option>
+     <option value="3">3</option>
+     <option value="4">4</option>
+     <option value="5">5</option>
+     <option value="6">6</option>
+     <option value="7">7</option>
+     <option value="8">8</option>
+     <option value="9">9</option>
+     <option value="10">10</option>
+     <option value="11">11</option>
+     <option value="12">12</option>
+     <option value="13">13</option>
+     <option value="15">14</option>
+     <option value="15">15</option>
+   </select>
+   </div>sensitivity: <div id="sensitivity"><input id="sensitivity" type="text"></input></div>
+   <input type="submit" value="Submit">
+   </form>
+   </div>
   </body>
 </html>
